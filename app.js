@@ -63,3 +63,75 @@ const galleryItems = [
         description: 'Lighthouse Coast Sea',
     },
 ];
+
+
+const refs = {
+    galleryList: document.querySelector(".js-gallery"),
+    modalEl: document.querySelector(".js-lightbox"),
+    imageEl: document.querySelector(".lightbox__image"),
+    buttonEl: document.querySelector('button[data-action="close-lightbox"]'),
+    overlayEl: document.querySelector(".lightbox__overlay")
+}
+
+const iconsGalleryEl = createGalleryList(galleryItems);
+refs.galleryList.insertAdjacentHTML("beforeend", iconsGalleryEl);
+
+    function createGalleryList(item) {
+        return item
+        .map(({ preview, original, description }) => {
+        return `<li class="gallery__item">
+        <a
+        class="gallery__link"
+        href="${original}"
+        >
+        <img
+        class="gallery__image"
+        src="${preview}"
+        data-source="${original}"
+        alt="${description}"
+        />
+        </a>
+        </li >
+        `;
+        })
+        .join("");
+    }
+        
+refs.galleryList.addEventListener('click', onGalleryIconClick);
+refs.buttonEl.addEventListener('click', closeModalWindow);
+refs.overlayEl.addEventListener('click', closeModalWindow);
+window.addEventListener('keydown', closeModalWindow);
+
+    function onGalleryIconClick(evt) {
+        evt.preventDefault();
+        if (evt.target.nodeName !== "IMG") {
+        return;
+  }
+
+        refs.modalEl.classList.toggle("is-open");
+
+
+        galleryItems.forEach(({ preview, original}) => {
+            if (evt.target.src === preview) {
+                refs.imageEl.src = `${original}`;
+            }
+        })
+
+        
+}
+    
+        
+    function closeModalWindow() {
+        refs.modalEl.classList.toggle("is-open");
+        refs.imageEl.src = "";
+        window.removeEventListener("keydown", ecsClose);
+        refs.overlayEl.removeEventListener("click", closeModalWindow);
+
+}
+        
+    function ecsClose(evt) {
+        if (evt.code === "Escape") {
+            closeModalWindow();
+        }
+    }
+
